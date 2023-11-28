@@ -22,6 +22,8 @@ public:
     std::uint32_t width()  const noexcept;
     std::uint32_t height() const noexcept;
 
+    bool empty() const noexcept;
+
 private:
     std::vector<std::uint8_t> m_pixels;
     std::uint32_t m_width;

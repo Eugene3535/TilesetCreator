@@ -141,3 +141,8 @@ std::uint32_t Image::height() const noexcept
 {
     return m_height;
 }
+
+bool Image::empty() const noexcept
+{
+    return m_pixels.empty();
+}

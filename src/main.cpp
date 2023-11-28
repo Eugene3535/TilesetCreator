@@ -1,5 +1,8 @@
 #include <iostream>
+#include <vector>
+#include <string>
 #include <unordered_map>
+#include <fstream>
 #include <cmath>
 
 #include "Image.hpp"
@@ -46,7 +49,10 @@ int main(int argc, char *argv[])
     if( ! image.loadFromFile("./res/map.png"))
         return -1;
 
+//  Containers
     std::unordered_map<std::uint32_t, std::uint8_t*> tileMap;
+    std::unordered_map<std::uint32_t, std::uint32_t> tileIDs;
+    std::vector<std::uint32_t> weights;
 
     const uint32_t tileWidth  = 16U;
     const uint32_t tileHeight = 16U;
@@ -56,6 +62,7 @@ int main(int argc, char *argv[])
     const auto pixels = image.pixels();
 
     std::uint32_t cnt = 0U;
+    std::uint32_t tileNum = 0U;
 
     for (std::uint32_t y = 0u; y < mapHeight; y += tileHeight)
         for (std::uint32_t x = 0u; x < mapWidth; x += tileWidth)
@@ -66,6 +73,12 @@ int main(int argc, char *argv[])
             auto weight = CalculateWeight(firstPixel, tileWidth, tileHeight, mapWidth);
 
             tileMap.try_emplace(weight, firstPixel);
+            weights.push_back(weight);
+
+            if(auto pair = tileIDs.try_emplace(weight, tileNum); pair.second)
+            {
+                tileNum++;
+            }
 
             cnt++;
         }
@@ -73,8 +86,8 @@ int main(int argc, char *argv[])
     std::cout << "Tileset size: " << tileMap.size() << '\n';
     std::cout << "Map size in tiles: " << cnt << '\n';
 
-    std::uint32_t columns  = 0;
-    std::uint32_t rows = 0;
+    std::uint32_t columns  = 0U;
+    std::uint32_t rows = 0U;
     CalculateTilesetSize(columns, rows, static_cast<std::uint32_t>(tileMap.size()));
 
     std::cout << "Tileset width: " << columns << "\theight: " << rows << '\n';
@@ -82,9 +95,7 @@ int main(int argc, char *argv[])
     Image image_out;
 	image_out.create(columns * tileWidth, rows * tileHeight);
 
-    std::size_t index = 0;
-
-    for (std::uint32_t y = 0; y < rows; ++y)
+    for (std::uint32_t y = 0, index = 0; y < rows; ++y)
         for (std::uint32_t x = 0; x < columns; ++x)
         {
             if(index < tileMap.size())
@@ -96,6 +107,39 @@ int main(int argc, char *argv[])
         }
 
     image_out.saveToFile("test.png");
-    
+
+    for(auto& n : weights)
+    {
+        if(auto id = tileIDs.find(n); id != tileIDs.end())
+        {
+            n = id->second;
+        }
+    }
+
+    const uint32_t tileMapWidth  = mapWidth / tileWidth;
+    const uint32_t tileMapHeight = mapHeight / tileHeight;
+
+    std::string buffer;
+    std::ofstream ofs("test.txt");
+
+    if(ofs.is_open())
+    {
+        for (std::uint32_t y = 0; y < tileMapHeight; ++y)
+        {
+            for (std::uint32_t x = 0; x < tileMapWidth; ++x)
+            {
+                const uint32_t index = y * tileMapWidth + x;
+                buffer += std::to_string(weights[index]);
+                buffer.push_back(',');
+            }
+            buffer.push_back('\n');
+        }
+//      Remove tre last comma from file and close it
+        buffer.pop_back();
+        buffer.pop_back();
+        ofs << buffer;
+        ofs.close();
+    }
+
     return 0;
 }

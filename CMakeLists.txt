@@ -12,7 +12,7 @@ list(APPEND CMAKE_PREFIX_PATH "your-custom-path")
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 
-qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION src/main.cpp src/Image.cpp)
+qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION src/main.cpp src/Image.cpp src/ImageViewer.cpp)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE -D_Qt_DEFINES_)
 

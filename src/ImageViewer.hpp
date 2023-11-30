@@ -7,44 +7,53 @@ class ImageViewer:
     public QMainWindow
 {
 public:
-    ImageViewer(QWidget* parent = nullptr);
-
-private slots:
-    void openImage();
-    void generateImage();
-    void clearImage();
-
-    void setXSize8();
-    void setXSize16();
-    void setXSize32();
-
-    void updateUI();
+    ImageViewer(QWidget* parent = nullptr) noexcept;
 
 private:
-    std::uint32_t calculateWeight(const std::uint8_t* firstPixel, std::uint32_t tileWidth, std::uint32_t tileHeight, std::uint32_t imageWidth);
-    void calculateTilesetSize(std::uint32_t& width, std::uint32_t& height, std::uint32_t numPixels);
+    void openImage() noexcept;
+    void generateImage() noexcept;
+    void clearImage() noexcept;
+
+    void setXSize8() noexcept;
+    void setXSize16() noexcept;
+    void setXSize32() noexcept;
+
+    void updateUI() noexcept;
 
 private:
-    QLabel *imageLabel;
-    QPushButton *generateButton;
-
-    QMenu *fileMenu;
-    QAction *openAction;
-    QAction *clearAction;
-    QAction *closeAction;
-
-    QMenu *optionsMenu;
-    QMenu *xSizeMenu;
-    QAction *x8Action;
-    QAction *x16Action;
-    QAction *x32Action;
-
-    QMenuBar *menuBar;
+    std::uint32_t calculateWeight(const std::uint8_t* firstPixel, std::uint32_t tileWidth, std::uint32_t tileHeight, std::uint32_t imageWidth) noexcept;
+    void calculateTilesetSize(std::uint32_t& width, std::uint32_t& height, std::uint32_t numPixels) noexcept;
 
 private:
-    Image m_image;
+    Image   m_rawPixels;
+    QString m_imageName;
 
-    std::unordered_map<std::uint32_t, std::uint8_t*> tileMap;
-    std::unordered_map<std::uint32_t, std::uint32_t> tileIDs;
-    std::vector<std::uint32_t> weights;
+    std::unordered_map<std::uint32_t, std::uint8_t*> m_tileMap;
+    std::unordered_map<std::uint32_t, std::uint32_t> m_tileIDs;
+    std::vector<std::uint32_t>                       m_weights;
+
+private:
+    QLabel*      m_imageLabel;
+    QPushButton* m_generateButton;
+
+    QMenu*   m_fileMenu;
+    QAction* m_openAction;
+    QAction* m_clearAction;
+    QAction* m_closeAction;
+
+    QMenu* m_optionsMenu;
+    QMenu* m_xSizeMenu;
+
+    QAction* m_x8Action;
+    QAction* m_x16Action;
+    QAction* m_x32Action;
+
+    QMenuBar* m_menuBar;
+
+private:
+    std::uint32_t m_tileSize;
+
+    static const std::uint32_t x8;
+    static const std::uint32_t x16;
+    static const std::uint32_t x32;
 };

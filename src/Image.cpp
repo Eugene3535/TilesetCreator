@@ -142,6 +142,13 @@ std::uint32_t Image::height() const noexcept
     return m_height;
 }
 
+void Image::clear() noexcept
+{
+    m_pixels.clear();
+    m_width = 0U;
+    m_height = 0U;
+}
+
 bool Image::empty() const noexcept
 {
     return m_pixels.empty();

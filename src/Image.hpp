@@ -22,6 +22,7 @@ public:
     std::uint32_t width()  const noexcept;
     std::uint32_t height() const noexcept;
 
+    void clear() noexcept;
     bool empty() const noexcept;
 
 private:

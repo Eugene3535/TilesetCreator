@@ -102,10 +102,16 @@ void ImageViewer::generateImage() noexcept
 
     if (!savePath.isEmpty())
     {
-        const uint32_t tileWidth  = m_tileSize;
-        const uint32_t tileHeight = m_tileSize;
-        const uint32_t mapWidth   = m_rawPixels.width();
-        const uint32_t mapHeight  = m_rawPixels.height();
+        uint32_t tileWidth  = m_tileSize;
+        uint32_t tileHeight = m_tileSize;
+        uint32_t mapWidth   = m_rawPixels.width();
+        uint32_t mapHeight  = m_rawPixels.height();
+
+        if (auto remainder = (mapWidth % tileWidth); remainder != 0)
+            mapWidth = (mapWidth - remainder);
+
+        if (auto remainder = (mapHeight % tileHeight); remainder != 0)
+            mapHeight = (mapHeight - remainder);
 
         const auto pixels = m_rawPixels.pixels();
 

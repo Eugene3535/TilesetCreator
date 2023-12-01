@@ -1,0 +1,3 @@
+[submodule "extlibs/stb"]
+	path = extlibs/stb
+	url = https://github.com/Eugene3535/TilesetCreator.git

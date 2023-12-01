@@ -1,35 +1,29 @@
 # TilesetCreator
 
-Tileset Creator is a public project for creating and managing tilesets for use in various applications or games.
+## Windows
+**1. Install a C++17 compiler:**  
+Visual Studio Community: https://visualstudio.microsoft.com/downloads/ or MinGW https://osdn.net/projects/mingw/releases/
 
-Build Instructions
-To build and run the Tileset Creator project, please follow the instructions below.
+**2. Install Git:**  
+	https://git-scm.com/downloads
 
-Prerequisites
-- CMake (version 3.22 or higher) -[ Link to download](https://cmake.org/download/)
+**3. Install CMake:**  
+	https://cmake.org/download
 
-- Qt (version 6 or higher) - https://www.qt.io/download
+**4. Install Qt (version 6 or higher):**  
+	https://www.qt.io/download
+	
+**5. Download stb-library:**  
+	https://github.com/nothings/stb.git
 
-- stb library - [Link to download](https://github.com/nothings/stb)https://github.com/nothings/stb
-
-1. Clone the repository:
-git clone https://github.com/Eugene3535/TilesetCreator.git
-
-2. Navigate to the Tileset Creator project directory:
-cd TilesetCreator
-
-3. Create a build directory фтв пenerate the build files using CMake:
+**6. Open git-bash and type:**  
+```console
+git clone https://github.com/Eugene3535/TilesetCreator.git --recursive
+cd TilesetCreator 
 cmake -S . -B build
-
-4. Build the project:
 cmake --build build --config Release
-
-Running the Project
-1. After a successful build, navigate to the output directory:
-cd build/Release
-
-2. Execute the Tileset Creator application:
-start TilesetCreator.exe
+start build/Release/TilesetCreator.exe
+```
 
 Contributing:
 Contributions to the Tileset Creator project are welcome and encouraged. Here are some ways you can contribute:

@@ -5,9 +5,9 @@ project(TilesetCreator LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(EXTERNAL_DIR "$ENV{External}")
+set(EXTERNAL_DIR "${CMAKE_SOURCE_DIR}/extlibs")
 
-list(APPEND CMAKE_PREFIX_PATH "D:/svn/External/multiplatform/install/windows/qt")
+list(APPEND CMAKE_PREFIX_PATH "your-custom-path")
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)

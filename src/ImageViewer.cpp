@@ -112,7 +112,7 @@ void ImageViewer::generateImage() noexcept
 
         const auto pixels = m_rawPixels.pixels();
 
-        std::uint32_t total_cnt = 0U;
+        std::uint32_t total_cnt = 0U; // total tile count 
         std::uint32_t tileNum = 0U;
 
         for (std::uint32_t y = 0u; y < mapHeight; y += tileHeight)

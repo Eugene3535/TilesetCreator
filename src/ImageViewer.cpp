@@ -13,17 +13,9 @@ const std::uint32_t ImageViewer::x32 = 32U;
 ImageViewer::ImageViewer(QWidget* parent) noexcept :
     QMainWindow(parent),
 	m_imageLabel(nullptr),
-	m_generateButton(nullptr),
-	m_fileMenu(nullptr),
-	m_openAction(nullptr),
-	m_clearAction(nullptr),
-	m_closeAction(nullptr),
-	m_optionsMenu(nullptr),
-	m_xSizeMenu(nullptr),
 	m_x8Action(nullptr),
 	m_x16Action(nullptr),
 	m_x32Action(nullptr),
-	m_menuBar(nullptr),
     m_tileSize(x16)
 {
     resize(480, 360);
@@ -32,29 +24,30 @@ ImageViewer::ImageViewer(QWidget* parent) noexcept :
     m_imageLabel->setStyleSheet("QLabel { border: 1px solid black; }");
     m_imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     m_imageLabel->setScaledContents(true);
-    m_generateButton = new QPushButton("Генерировать", this);
 
-    m_fileMenu = new QMenu("Файл", this);
-    m_openAction = m_fileMenu->addAction("Открыть");
+    QPushButton* generateButton = new QPushButton("Генерировать", this);
 
-    m_clearAction = m_fileMenu->addAction("Очистить");
-    m_closeAction = m_fileMenu->addAction("Закрыть");
+    QMenu* fileMenu = new QMenu("Файл", this);
 
-    m_optionsMenu = new QMenu("Опции", this);
-    m_xSizeMenu = new QMenu("Размер тайла", this);
-    m_x8Action  = m_xSizeMenu->addAction("x8");
-    m_x16Action = m_xSizeMenu->addAction("x16");
-    m_x32Action = m_xSizeMenu->addAction("x32");
-    m_optionsMenu->addMenu(m_xSizeMenu);
+    QAction* openAction = fileMenu->addAction("Открыть");
+    m_clearAction = fileMenu->addAction("Очистить");
+    QAction* closeAction = fileMenu->addAction("Закрыть");
 
-    m_menuBar = new QMenuBar(this);
-    m_menuBar->addMenu(m_fileMenu);
-    m_menuBar->addMenu(m_optionsMenu);
-    setMenuBar(m_menuBar);
+    QMenu* optionsMenu = new QMenu("Опции", this);
+    QMenu* xSizeMenu = new QMenu("Размер тайла", this);
+    m_x8Action  = xSizeMenu->addAction("x8");
+    m_x16Action = xSizeMenu->addAction("x16");
+    m_x32Action = xSizeMenu->addAction("x32");
+    optionsMenu->addMenu(xSizeMenu);
+
+    QMenuBar* menuBar = new QMenuBar(this);
+    menuBar->addMenu(fileMenu);
+    menuBar->addMenu(optionsMenu);
+    setMenuBar(menuBar);
 
     QHBoxLayout* buttonLayout = new QHBoxLayout(this);
     buttonLayout->addStretch();
-    buttonLayout->addWidget(m_generateButton);
+    buttonLayout->addWidget(generateButton);
 
     QWidget* centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
@@ -63,15 +56,15 @@ ImageViewer::ImageViewer(QWidget* parent) noexcept :
     mainLayout->addWidget(m_imageLabel);
     mainLayout->addLayout(buttonLayout);
 
-    connect(m_openAction, &QAction::triggered, this, &ImageViewer::openImage);
+    connect(openAction, &QAction::triggered, this, &ImageViewer::openImage);
     connect(m_clearAction, &QAction::triggered, this, &ImageViewer::clearImage);
-    connect(m_closeAction, &QAction::triggered, this, &ImageViewer::close);
+    connect(closeAction, &QAction::triggered, this, &ImageViewer::close);
     
     connect(m_x8Action, &QAction::triggered, this, &ImageViewer::setXSize8);
     connect(m_x16Action, &QAction::triggered, this, &ImageViewer::setXSize16);
     connect(m_x32Action, &QAction::triggered, this, &ImageViewer::setXSize32);
 
-    connect(m_generateButton, &QPushButton::pressed, this, &ImageViewer::generateImage);
+    connect(generateButton, &QPushButton::pressed, this, &ImageViewer::generateImage);
 }
 
 void ImageViewer::openImage() noexcept
@@ -98,6 +91,9 @@ void ImageViewer::generateImage() noexcept
     if(m_rawPixels.empty())
         return;
 
+    if (m_rawPixels.width() < (m_tileSize >> 2)) return;
+    if (m_rawPixels.height() < (m_tileSize >> 2)) return;
+
     QString savePath = QFileDialog::getExistingDirectory(this, "Выберите директорию для сохранения", QDir::currentPath(), QFileDialog::ShowDirsOnly);
 
     if (!savePath.isEmpty())
@@ -107,6 +103,7 @@ void ImageViewer::generateImage() noexcept
         uint32_t mapWidth   = m_rawPixels.width();
         uint32_t mapHeight  = m_rawPixels.height();
 
+//      Check out of bounds
         if (auto remainder = (mapWidth % tileWidth); remainder != 0)
             mapWidth = (mapWidth - remainder);
 
@@ -115,7 +112,7 @@ void ImageViewer::generateImage() noexcept
 
         const auto pixels = m_rawPixels.pixels();
 
-        std::uint32_t cnt = 0U;
+        std::uint32_t total_cnt = 0U;
         std::uint32_t tileNum = 0U;
 
         for (std::uint32_t y = 0u; y < mapHeight; y += tileHeight)
@@ -134,7 +131,7 @@ void ImageViewer::generateImage() noexcept
                     tileNum++;
                 }
 
-                cnt++;
+                total_cnt++;
             }
 
         std::uint32_t columns  = 0U;

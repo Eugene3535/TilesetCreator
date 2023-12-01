@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(EXTERNAL_DIR "$ENV{External}")
 
-list(APPEND CMAKE_PREFIX_PATH "your-custom-path")
+list(APPEND CMAKE_PREFIX_PATH "D:/svn/External/multiplatform/install/windows/qt")
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)

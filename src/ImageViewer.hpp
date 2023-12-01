@@ -33,22 +33,12 @@ private:
     std::vector<std::uint32_t>                       m_weights;
 
 private:
-    QLabel*      m_imageLabel;
-    QPushButton* m_generateButton;
-
-    QMenu*   m_fileMenu;
-    QAction* m_openAction;
+    QLabel*  m_imageLabel;
     QAction* m_clearAction;
-    QAction* m_closeAction;
-
-    QMenu* m_optionsMenu;
-    QMenu* m_xSizeMenu;
 
     QAction* m_x8Action;
     QAction* m_x16Action;
     QAction* m_x32Action;
-
-    QMenuBar* m_menuBar;
 
 private:
     std::uint32_t m_tileSize;

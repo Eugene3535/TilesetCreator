@@ -105,17 +105,14 @@ void ImageViewer::generateImage() noexcept
 
 //      Check out of bounds
         if (auto remainder = (mapWidth % tileWidth); remainder != 0)
-            mapWidth = (mapWidth - remainder);
+            mapWidth -= remainder;
 
         if (auto remainder = (mapHeight % tileHeight); remainder != 0)
-            mapHeight = (mapHeight - remainder);
+            mapHeight -= remainder;
 
         const auto pixels = m_rawPixels.pixels();
 
-        std::uint32_t total_cnt = 0U; // total tile count 
-        std::uint32_t tileNum = 0U;
-
-        for (std::uint32_t y = 0u; y < mapHeight; y += tileHeight)
+        for (std::uint32_t y = 0u, tileNum = 1U; y < mapHeight; y += tileHeight)
             for (std::uint32_t x = 0u; x < mapWidth; x += tileWidth)
             {
                 auto offset = x + y * mapWidth;
@@ -123,15 +120,13 @@ void ImageViewer::generateImage() noexcept
                 auto firstPixel = pixels + offset;
                 auto weight = calculateWeight(firstPixel, tileWidth, tileHeight, mapWidth);
 
-                m_tileMap.try_emplace(weight, firstPixel);
-                m_weights.push_back(weight);
-
-                if(auto pair = m_tileIDs.try_emplace(weight, tileNum); pair.second)
+                if(auto pair = m_tileIDs.emplace(weight, tileNum); pair.second)
                 {
+                    m_tileMap.emplace(tileNum, firstPixel);
                     tileNum++;
                 }
 
-                total_cnt++;
+                m_weights.push_back(weight);
             }
 
         std::uint32_t columns  = 0U;
@@ -154,6 +149,7 @@ void ImageViewer::generateImage() noexcept
 
         image_out.saveToFile((savePath + "/tileset_" + m_imageName).toStdString());
 
+//      Convert tile weights to their identifiers
         for(auto& n : m_weights)
         {
             if(auto id = m_tileIDs.find(n); id != m_tileIDs.end())
@@ -166,6 +162,7 @@ void ImageViewer::generateImage() noexcept
         const uint32_t tileMapHeight = mapHeight / tileHeight;
 
         std::string buffer;
+        buffer.reserve(tileMapWidth * tileMapHeight * 2);
         std::string csvName = m_imageName.toStdString().substr(0, m_imageName.size() - 4);
 
         std::ofstream ofs(savePath.toStdString() + '/' + csvName + "_csv.txt");
@@ -177,8 +174,9 @@ void ImageViewer::generateImage() noexcept
                 for (std::uint32_t x = 0; x < tileMapWidth; ++x)
                 {
                     const uint32_t index = y * tileMapWidth + x;
+
                     buffer += std::to_string(m_weights[index]);
-                    buffer.push_back(',');
+                    buffer.push_back(',');             
                 }
                 buffer.push_back('\n');
             }
